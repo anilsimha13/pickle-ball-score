@@ -66,6 +66,7 @@ export function TournamentForm({
     formState: { errors, isSubmitting },
   } = methods
 
+  // eslint-disable-next-line react-hooks/incompatible-library
   const bannerImage = watch('bannerImage')
 
   async function handleFormSubmit(data: CreateTournamentInput) {

@@ -174,4 +174,32 @@ export const sampleTournaments: Tournament[] = [
     sponsors: [],
     createdAt: '2026-01-05T00:00:00.000Z',
   },
+  {
+    id: 'tournament-006',
+    name: 'Pune Grand Prix 2025',
+    venue: 'Balewadi Sports Complex, Pune',
+    startDate: '2025-11-10',
+    endDate: '2025-11-12',
+    pointsPerGame: 11,
+    bestOf: 3,
+    prizes: { champion: 100000, runnerUp: 50000, thirdPlace: 25000 },
+    teamIds: ['team-001', 'team-002', 'team-003', 'team-004'],
+    status: 'Announced',
+    matches: [
+      { id: 'pg-r1-p0', round: 1, position: 0, type: 'Knockout', isBye: false, isWalkover: false, teamAId: 'team-001', teamBId: 'team-002', games: [{ teamA: 11, teamB: 6 }, { teamA: 11, teamB: 8 }], winnerId: 'team-001', status: 'Completed' },
+      { id: 'pg-r1-p1', round: 1, position: 1, type: 'Knockout', isBye: false, isWalkover: false, teamAId: 'team-003', teamBId: 'team-004', games: [{ teamA: 9, teamB: 11 }, { teamA: 11, teamB: 8 }, { teamA: 8, teamB: 11 }], winnerId: 'team-004', status: 'Completed' },
+      { id: 'pg-r2-p0', round: 2, position: 0, type: 'Knockout', isBye: false, isWalkover: false, teamAId: 'team-001', teamBId: 'team-004', games: [{ teamA: 11, teamB: 9 }, { teamA: 11, teamB: 7 }], winnerId: 'team-001', status: 'Completed' },
+      { id: 'pg-r2-p1', round: 2, position: 1, type: 'ThirdPlace', isBye: false, isWalkover: false, teamAId: 'team-002', teamBId: 'team-003', games: [{ teamA: 11, teamB: 8 }], winnerId: 'team-002', status: 'Completed' },
+    ],
+    results: {
+      championId: 'team-001',
+      runnerUpId: 'team-004',
+      thirdPlaceId: 'team-002',
+      announcedAt: '2025-11-12T18:00:00.000Z',
+    },
+    sponsors: [
+      { id: 'sponsor-008', name: 'Pune Sports Authority', tier: 'Title', website: 'https://punesa.example.com' },
+    ],
+    createdAt: '2025-10-01T00:00:00.000Z',
+  },
 ]

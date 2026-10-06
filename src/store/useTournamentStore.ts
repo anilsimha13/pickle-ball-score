@@ -8,6 +8,7 @@ import { hasSharedPlayer } from '@/lib/validation'
 import { generateDraw as libGenerateDraw, reshuffleDraw as libReshuffleDraw } from '@/lib/draw'
 import { advanceWinner, canEditCompletedMatch, getFinalMatch, getThirdPlaceMatch } from '@/lib/bracket'
 import { validateGames, determineWinner, matchStatus } from '@/lib/scoring'
+import { announceEligibility } from '@/lib/results'
 import { usePlayerStore } from './usePlayerStore'
 import { useTeamStore } from './useTeamStore'
 import type { Tournament, CreateTournamentInput, Match } from '@/types'
@@ -26,6 +27,7 @@ interface TournamentState {
   saveGameScores: (tournamentId: string, matchId: string, games: GameScore[]) => void
   recordWalkover: (tournamentId: string, matchId: string, winnerId: string) => void
   editMatchScores: (tournamentId: string, matchId: string, games: GameScore[]) => void
+  announceResults: (tournamentId: string) => void
   getTournament: (id: string) => Tournament | undefined
   searchTournaments: (q: string) => Tournament[]
   setTournaments: (tournaments: Tournament[]) => void
@@ -248,6 +250,37 @@ export const useTournamentStore = create<TournamentState>()(
             }
 
             return { ...t, matches }
+          }),
+        }))
+      },
+
+      announceResults(tournamentId) {
+        assertSession()
+        set((s) => ({
+          tournaments: s.tournaments.map((t) => {
+            if (t.id !== tournamentId) return t
+            const eligibility = announceEligibility(t)
+            if (!eligibility.eligible) throw new Error(eligibility.reasons[0])
+
+            const finalMatch = getFinalMatch(t.matches)
+            const thirdPlace = getThirdPlaceMatch(t.matches)
+            if (!finalMatch?.winnerId || !thirdPlace?.winnerId) {
+              throw new Error('Final or 3rd Place match has no winner')
+            }
+
+            const runnerUpId =
+              finalMatch.winnerId === finalMatch.teamAId ? finalMatch.teamBId! : finalMatch.teamAId!
+
+            return {
+              ...t,
+              status: 'Announced',
+              results: {
+                championId: finalMatch.winnerId,
+                runnerUpId,
+                thirdPlaceId: thirdPlace.winnerId,
+                announcedAt: new Date().toISOString(),
+              },
+            }
           }),
         }))
       },

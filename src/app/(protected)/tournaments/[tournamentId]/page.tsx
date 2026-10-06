@@ -18,6 +18,9 @@ import { TeamPicker } from '@/components/tournaments/TeamPicker'
 import { useTournamentStore } from '@/store/useTournamentStore'
 import { useToast } from '@/components/ui/Toast'
 import { canDeleteTournament, canEditMeta, isFullyReadOnly } from '@/lib/tournament'
+import { getPodium } from '@/lib/results'
+import { useTeamStore } from '@/store/useTeamStore'
+import { formatINR } from '@/lib/currency'
 import { useRouter } from 'next/navigation'
 import { cn } from '@/lib/utils'
 
@@ -29,6 +32,7 @@ function TournamentDetail({ tournamentId }: { tournamentId: string }) {
   const deleteTournament = useTournamentStore((s) => s.deleteTournament)
 
   const t = getTournament(tournamentId)
+  const teams = useTeamStore((s) => s.teams)
 
   if (!t) return <NotFoundCard entity="tournament" />
 
@@ -173,6 +177,30 @@ function TournamentDetail({ tournamentId }: { tournamentId: string }) {
         <h3 className="font-heading text-lg text-net mb-3">Teams</h3>
         <TeamPicker tournament={t} readOnly={t.status !== 'Draft'} />
       </Card>
+
+      {t.status === 'Announced' && t.results && (() => {
+        const podium = getPodium(t)
+        if (!podium) return null
+        const champion = teams.find((tm) => tm.id === podium.champion.teamId)
+        return (
+          <Card kitchenStrip className="p-4">
+            <div className="flex items-center justify-between gap-3">
+              <div>
+                <p className="text-xs uppercase tracking-wide text-muted font-semibold mb-1">Champion</p>
+                <p className="font-heading text-xl text-gold">{champion?.name ?? 'TBD'}</p>
+                <p className="text-sm text-muted">{formatINR(podium.champion.prize)}</p>
+              </div>
+              <Link
+                href={`/tournaments/${t.id}/results`}
+                className="inline-flex items-center gap-1 rounded-lg bg-ball text-net px-3 py-2 text-sm font-medium hover:bg-ball-dark transition-colors"
+                data-testid="view-results-btn"
+              >
+                🏆 View Full Results
+              </Link>
+            </div>
+          </Card>
+        )
+      })()}
 
       <ConfirmDialog
         open={deleteOpen}

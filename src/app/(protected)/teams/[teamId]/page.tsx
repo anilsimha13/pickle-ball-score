@@ -25,6 +25,8 @@ function TeamDetail({ teamId }: { teamId: string }) {
   const router = useRouter()
   const [confirmOpen, setConfirmOpen] = useState(false)
 
+  const tournaments = useTournamentStore((s) => s.tournaments)
+
   const team = getTeam(teamId)
   if (!team) return <NotFoundCard entity="team" />
 
@@ -40,8 +42,6 @@ function TeamDetail({ teamId }: { teamId: string }) {
       toast(err instanceof Error ? err.message : 'Could not delete team', 'error')
     }
   }
-
-  const tournaments = useTournamentStore((s) => s.tournaments)
   const tournamentCount = tournaments.filter((t) => t.teamIds.includes(teamId)).length
   const deleteBlocked = tournamentCount > 0
   const deleteReason = deleteBlocked

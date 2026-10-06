@@ -33,6 +33,7 @@ export default function ContactPage() {
     defaultValues: { subject: 'General', phone: '' },
   })
 
+  // eslint-disable-next-line react-hooks/incompatible-library
   const message = watch('message') ?? ''
 
   // Pre-select subject from ?subject= query param
