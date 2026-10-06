@@ -2,6 +2,7 @@
 
 import {
   useEffect,
+  useId,
   useRef,
   type ReactNode,
   type KeyboardEvent,
@@ -18,6 +19,7 @@ interface ModalProps {
 }
 
 export function Modal({ open, onClose, title, children, className }: ModalProps) {
+  const titleId = useId() // CR-010: unique id per instance, no duplicate id="modal-title"
   const backdropRef = useRef<HTMLDivElement>(null)
   const dialogRef = useRef<HTMLDivElement>(null)
   const previousFocusRef = useRef<HTMLElement | null>(null)
@@ -71,13 +73,13 @@ export function Modal({ open, onClose, title, children, className }: ModalProps)
         ref={dialogRef}
         role="dialog"
         aria-modal="true"
-        aria-labelledby="modal-title"
+        aria-labelledby={titleId}
         tabIndex={-1}
         onKeyDown={trapFocus}
         className={cn('bg-surface rounded-xl shadow-xl w-full max-w-md focus:outline-none', className)}
       >
         <div className="flex items-center justify-between border-b border-muted px-6 py-4">
-          <h2 id="modal-title" className="font-heading text-xl text-net">
+          <h2 id={titleId} className="font-heading text-xl text-net">
             {title}
           </h2>
           <button

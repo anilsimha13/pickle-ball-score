@@ -18,6 +18,7 @@ export function Spinner({ className }: SpinnerProps) {
         aria-hidden="true"
         className="motion-safe:animate-bounce motion-reduce:animate-pulse"
       >
+        {/* Canvas/SVG fill — CSS vars not supported here */}
         <circle cx="16" cy="16" r="14" fill="#D7F04A" />
         {[0, 60, 120, 180, 240, 300].map((angle, i) => {
           const rad = (angle * Math.PI) / 180

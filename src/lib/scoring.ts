@@ -1,17 +1,4 @@
 export type GameScore = { teamA: number; teamB: number }
-export type MatchResult = { games: GameScore[]; winnerId: string }
-
-export function validateGame(teamA: number, teamB: number, pointsPerGame: number): string | null {
-  const n = '[n]' // placeholder replaced per-call via the exported wrapper
-  void n
-  if (teamA === teamB) return null // handled by caller with index
-  const W = Math.max(teamA, teamB)
-  const L = Math.min(teamA, teamB)
-  if (W === L) return 'tied'
-  if (W === pointsPerGame && L <= pointsPerGame - 2) return null
-  if (W > pointsPerGame && W - L === 2) return null
-  return 'invalid'
-}
 
 // Returns null if valid, error string if invalid (uses 1-based game index in message)
 export function validateGameScore(

@@ -201,6 +201,12 @@ export const useTournamentStore = create<TournamentState>()(
             if (match.status === 'Completed' && !match.isWalkover) {
               throw new Error('Match is already completed')
             }
+            // CR-003: check downstream matches before overwriting a completed walkover
+            if (match.status === 'Completed') {
+              if (!canEditCompletedMatch(t.matches, matchId)) {
+                throw new Error('Cannot change walkover: a downstream match already has scores.')
+              }
+            }
 
             const updatedMatch: Match = {
               ...match,
@@ -249,7 +255,19 @@ export const useTournamentStore = create<TournamentState>()(
               matches = advanceWinner(matches, updatedMatch)
             }
 
-            return { ...t, matches }
+            // CR-004: apply the same Completed transition that saveGameScores uses
+            let newStatus: Tournament['status'] = t.status
+            const finalMatch = getFinalMatch(matches)
+            const thirdMatch = getThirdPlaceMatch(matches)
+            if (
+              newStatus === 'InProgress' &&
+              finalMatch?.status === 'Completed' &&
+              thirdMatch?.status === 'Completed'
+            ) {
+              newStatus = 'Completed'
+            }
+
+            return { ...t, matches, status: newStatus }
           }),
         }))
       },

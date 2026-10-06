@@ -10,6 +10,7 @@ export function Confetti() {
       particleCount: 150,
       spread: 80,
       origin: { y: 0.6 },
+      // Canvas/SVG fill — CSS vars not supported here
       colors: ['#D7F04A', '#1E5AA8', '#F28C28', '#FFFFFF'],
     })
   }, [])

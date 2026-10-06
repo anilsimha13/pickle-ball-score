@@ -61,7 +61,7 @@ export function safeRedirect(value: string | null | undefined): string {
   if (value.startsWith('//')) return '/'
   if (/[\x00-\x1f\x7f]/u.test(value)) return '/'
   if (value.includes('\\')) return '/'
-  if (value === '/login' || value === '/signup') return '/dashboard'
+  if (value === '/login' || value === '/signup') return '/' // CR-013: spec says fall back to '/'
   try {
     const url = new URL(value, typeof window !== 'undefined' ? window.location.origin : 'http://localhost:3000')
     if (url.origin !== (typeof window !== 'undefined' ? window.location.origin : 'http://localhost:3000')) return '/'

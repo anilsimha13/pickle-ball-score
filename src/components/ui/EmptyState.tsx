@@ -19,6 +19,7 @@ export function EmptyState({ title, description, action }: EmptyStateProps) {
       >
         <rect x="28" y="4" width="8" height="40" rx="4" fill="currentColor" opacity="0.4" />
         <ellipse cx="32" cy="52" rx="12" ry="8" fill="currentColor" opacity="0.3" />
+        {/* Canvas/SVG fill — CSS vars not supported here */}
         <circle cx="32" cy="52" r="6" fill="#D7F04A" opacity="0.8" />
         <circle cx="32" cy="52" r="3" fill="currentColor" opacity="0.5" />
       </svg>

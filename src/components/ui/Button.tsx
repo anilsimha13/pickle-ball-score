@@ -25,18 +25,34 @@ const sizeClasses: Record<Size, string> = {
 }
 
 export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
-  ({ variant = 'primary', size = 'md', className, 'aria-disabled': ariaDisabled, ...props }, ref) => {
+  ({ variant = 'primary', size = 'md', className, 'aria-disabled': ariaDisabled, onClick, onKeyDown, ...props }, ref) => {
     const isAriaDisabled = ariaDisabled === true || ariaDisabled === 'true'
+
+    // CR-001: suppress click/keyboard activation when aria-disabled so keyboard users
+    // can't trigger the action (pointer-events-none only blocks mouse, not Enter/Space).
+    const handleClick = isAriaDisabled
+      ? (e: React.MouseEvent<HTMLButtonElement>) => e.preventDefault()
+      : onClick
+
+    const handleKeyDown = isAriaDisabled
+      ? (e: React.KeyboardEvent<HTMLButtonElement>) => {
+          if (e.key === 'Enter' || e.key === ' ') e.preventDefault()
+        }
+      : onKeyDown
+
     return (
       <button
         ref={ref}
         aria-disabled={isAriaDisabled || undefined}
         {...props}
+        onClick={handleClick}
+        onKeyDown={handleKeyDown}
         className={cn(
           'inline-flex items-center justify-center gap-2 rounded-lg font-medium transition-colors focus-visible:outline-none',
           variantClasses[variant],
           sizeClasses[size],
-          isAriaDisabled && 'opacity-50 cursor-not-allowed pointer-events-none',
+          // CR-001: removed pointer-events-none (it hides the Tooltip on hover too)
+          isAriaDisabled && 'opacity-50 cursor-not-allowed',
           props.disabled && 'opacity-50 cursor-not-allowed',
           className,
         )}

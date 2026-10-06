@@ -57,6 +57,9 @@ export const tournamentSchema = z.object({
 
 export const createTournamentSchema = tournamentSchema
   .omit({ id: true, createdAt: true, matches: true, results: true, status: true })
+  .extend({
+    sponsors: z.array(sponsorSchema).max(20),
+  })
   .refine((d) => d.endDate >= d.startDate, {
     message: "End date can't be before the start date",
     path: ['endDate'],

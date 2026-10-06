@@ -14,6 +14,11 @@ export interface Podium {
 }
 
 export function announceEligibility(tournament: Tournament): AnnounceEligibility {
+  // CR-022: guard against Announced status (already done)
+  if (tournament.status === 'Announced') {
+    return { eligible: false, reasons: ['Already announced'] }
+  }
+
   const reasons: string[] = []
 
   const today = todayLocalDate()

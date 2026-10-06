@@ -5,6 +5,7 @@ import { makeIdbStorage, PERSIST_KEYS } from '@/lib/storage'
 import { hasDuplicatePair } from '@/lib/validation'
 import type { Team, CreateTeamInput } from '@/lib/schemas/team'
 import { useTournamentStore } from '@/store/useTournamentStore'
+import { usePlayerStore } from '@/store/usePlayerStore'
 
 interface TeamState {
   teams: Team[]
@@ -37,7 +38,11 @@ export const useTeamStore = create<TeamState>()(
         }
         const dup = hasDuplicatePair(p1, p2, teams)
         if (dup) {
-          throw new Error(`${p1} & ${p2} are already team ${dup.name}`)
+          // CR-002: resolve player names instead of showing raw UUIDs
+          const players = usePlayerStore.getState().players
+          const n1 = players.find((pl) => pl.id === p1)?.name ?? p1
+          const n2 = players.find((pl) => pl.id === p2)?.name ?? p2
+          throw new Error(`${n1} & ${n2} are already team ${dup.name}`)
         }
         const team: Team = {
           ...input,
@@ -66,7 +71,13 @@ export const useTeamStore = create<TeamState>()(
           const [p1, p2] = patch.playerIds
           if (p1 === p2) throw new Error('Pick two different players')
           const dup = hasDuplicatePair(p1, p2, teams, id)
-          if (dup) throw new Error(`${p1} & ${p2} are already team ${dup.name}`)
+          if (dup) {
+            // CR-002: resolve player names instead of showing raw UUIDs
+            const players = usePlayerStore.getState().players
+            const n1 = players.find((pl) => pl.id === p1)?.name ?? p1
+            const n2 = players.find((pl) => pl.id === p2)?.name ?? p2
+            throw new Error(`${n1} & ${n2} are already team ${dup.name}`)
+          }
         }
 
         if (patch.name) {

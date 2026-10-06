@@ -1,17 +1,15 @@
 import { z } from 'zod'
 import { playerSchema, type Player } from '@/lib/schemas/player'
 import { teamSchema, type Team } from '@/lib/schemas/team'
+import { tournamentSchema, type Tournament } from '@/lib/schemas/tournament'
 import { contactMessageSchema, type ContactMessage } from '@/lib/schemas/contact'
-
-// Use z.any() for tournaments until the full schema is available in Phase 4
-const anyTournamentSchema = z.any()
 
 export const backupSchema = z.object({
   schemaVersion: z.literal(1),
   exportedAt: z.string(),
   players: z.array(playerSchema),
   teams: z.array(teamSchema),
-  tournaments: z.array(anyTournamentSchema),
+  tournaments: z.array(tournamentSchema), // CR-005: use real schema, not z.any()
   contactMessages: z.array(contactMessageSchema),
 })
 
@@ -20,7 +18,7 @@ export type Backup = z.infer<typeof backupSchema>
 interface CurrentState {
   players: Player[]
   teams: Team[]
-  tournaments: unknown[]
+  tournaments: Tournament[]
   messages: ContactMessage[]
 }
 
@@ -39,7 +37,7 @@ export function exportData(state: CurrentState): string {
 export interface ImportResult {
   players: Player[]
   teams: Team[]
-  tournaments: unknown[]
+  tournaments: Tournament[]
   messages: ContactMessage[]
   added: number
   updated: number
@@ -83,10 +81,7 @@ export function importData(json: string, currentState: CurrentState): ImportResu
     backup.teams,
   )
   const mergedMessages = mergeById(currentState.messages, backup.contactMessages)
-  const mergedTournaments = mergeById(
-    currentState.tournaments as { id: string }[],
-    backup.tournaments as { id: string }[],
-  )
+  const mergedTournaments = mergeById(currentState.tournaments, backup.tournaments)
 
   // Integrity checks
   const errors: string[] = []
@@ -116,7 +111,7 @@ export function importData(json: string, currentState: CurrentState): ImportResu
   return {
     players: mergedPlayers,
     teams: mergedTeams,
-    tournaments: mergedTournaments,
+    tournaments: mergedTournaments as Tournament[],
     messages: mergedMessages,
     added,
     updated,

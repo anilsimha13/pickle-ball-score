@@ -28,6 +28,10 @@ export function useSession() {
       }
     }
 
+    // CR-012: check immediately on mount so an already-expired session is caught
+    // without requiring a focus event first
+    checkExpiry()
+
     window.addEventListener('focus', checkExpiry)
     return () => window.removeEventListener('focus', checkExpiry)
   }, [isProtected, pathname, router, setSession, toast])
