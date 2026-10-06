@@ -1,5 +1,6 @@
 # Personal Claude Code overrides
 .claude/settings.local.json
+.claude/worktrees/
 
 # Local change reviews written by the Stop hook (.claude/hooks/review-changes.mjs)
 /change-review-*.md

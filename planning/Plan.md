@@ -499,40 +499,40 @@ pickle-ball-score/
 ## 7. Phased Task Plan
 
 ### Phase 0 — Setup
-- [ ] `create-next-app` (TS, App Router, Tailwind, ESLint, `src/`)
-- [ ] Install: zustand, idb-keyval, react-hook-form, zod, @hookform/resolvers, date-fns, lucide-react, canvas-confetti
-- [ ] Install dev: @playwright/test, vitest, fake-indexeddb, prettier, eslint-config-prettier, @types/canvas-confetti
-- [ ] Add npm scripts (`typecheck`, `test:unit`, `test:e2e`)
-- [ ] `.gitignore` and `.env.example` (test account + `NEXT_PUBLIC_TEST_SEED`)
-- [ ] Create folder scaffold from Section 6
-- [ ] Configure Vitest (`node` environment) and Playwright (baseURL, webServer `npm run dev`, Desktop Chromium + Pixel 7 projects, global setup)
+- [x] `create-next-app` (TS, App Router, Tailwind, ESLint, `src/`)
+- [x] Install: zustand, idb-keyval, react-hook-form, zod, @hookform/resolvers, date-fns, lucide-react, canvas-confetti
+- [x] Install dev: @playwright/test, vitest, fake-indexeddb, prettier, eslint-config-prettier, @types/canvas-confetti
+- [x] Add npm scripts (`typecheck`, `test:unit`, `test:e2e`)
+- [x] `.gitignore` and `.env.example` (test account + `NEXT_PUBLIC_TEST_SEED`)
+- [x] Create folder scaffold from Section 6
+- [x] Configure Vitest (`node` environment) and Playwright (baseURL, webServer `npm run dev`, Desktop Chromium + Pixel 7 projects, global setup)
 
 ### Phase 1 — Theme & Layout
-- [ ] Tailwind theme tokens (all of Section 4) + fonts via `next/font`
-- [ ] UI primitives in `components/ui` with `data-testid` support, incl. `Tooltip`, `EmptyState`, `NotFoundCard`, `Skeleton`, `Table`, `StatusBadge`, `ConfirmDialog`
-- [ ] Disabled-with-reason pattern (`aria-disabled` + Tooltip) in `Button`
-- [ ] `useHydrated` + `HydrationGate` (spinner/skeleton until IndexedDB hydration finishes); `app/not-found.tsx`
-- [ ] Navbar (responsive with MobileMenu), Footer with privacy notice, court-pattern background, PageHeader, pickleball Spinner (reduced-motion variant)
-- [ ] Dashboard shell
+- [x] Tailwind theme tokens (all of Section 4) + fonts via `next/font`
+- [x] UI primitives in `components/ui` with `data-testid` support, incl. `Tooltip`, `EmptyState`, `NotFoundCard`, `Skeleton`, `Table`, `StatusBadge`, `ConfirmDialog`
+- [x] Disabled-with-reason pattern (`aria-disabled` + Tooltip) in `Button`
+- [x] `useHydrated` + `HydrationGate` (spinner/skeleton until IndexedDB hydration finishes); `app/not-found.tsx`
+- [x] Navbar (responsive with MobileMenu), Footer with privacy notice, court-pattern background, PageHeader, pickleball Spinner (reduced-motion variant)
+- [x] Dashboard shell
 
 ### Phase 2 — Auth & Public Pages
-- [ ] `lib/auth.ts` (`safeRedirect` incl. backslash/same-origin checks, `assertSession`, cookie attributes) + `useAuthStore` + unit tests
-- [ ] `middleware.ts` route protection with `?redirect=` support and asset matcher; route groups `(public)` / `(protected)`
-- [ ] `useSession` focus check on protected routes only (toast + redirect)
-- [ ] Login page (show/hide password, remember me, error state)
-- [ ] Sign Up page (validation + "registrations open soon" notice; nothing saved)
-- [ ] Navbar user menu + Logout; logged-out links
+- [x] `lib/auth.ts` (`safeRedirect` incl. backslash/same-origin checks, `assertSession`, cookie attributes) + `useAuthStore` + unit tests
+- [x] `middleware.ts` route protection with `?redirect=` support and asset matcher; route groups `(public)` / `(protected)`
+- [x] `useSession` focus check on protected routes only (toast + redirect)
+- [x] Login page (show/hide password, remember me, error state)
+- [x] Sign Up page (validation + "registrations open soon" notice; nothing saved)
+- [x] Navbar user menu + Logout; logged-out links
 - [ ] Contact Us page + `useContactStore` (`addMessage` without session check) + `?subject=` pre-select + demo note
 - [ ] E2E: `auth.spec.ts` (incl. unsafe redirects, expired cookie, client-side expiry), `contact.spec.ts` (incl. logged-out submission)
 
 ### Phase 3 — Players & Teams
-- [ ] Zod schemas → `z.infer` types; `usePlayerStore`, `useTeamStore` with IndexedDB persistence, `assertSession()` in actions, quota error handling
-- [ ] `lib/storage.ts` exports DB/store names + persist envelope; unit tests with `fake-indexeddb`
-- [ ] `lib/sampleData.ts` (players + teams) and `tests/e2e/fixtures/seed.ts` (seed → reload)
-- [ ] `ImageUpload` with `checkImageFile` (+ unit tests) and client-side compression (800px / 1600px for banners); `LevelSelect` dropdown
-- [ ] Player create/edit/list/search/detail; delete blocked while on any team; not-found handling
-- [ ] Team form with `PlayerPicker` (choose existing or create inline, saved only with the team), list, search, detail, delete blocked while in any tournament
-- [ ] Validation (3.11): 2 different players, unique team name, no duplicate pairs + unit tests
+- [x] Zod schemas → `z.infer` types; `usePlayerStore`, `useTeamStore` with IndexedDB persistence, `assertSession()` in actions, quota error handling
+- [x] `lib/storage.ts` exports DB/store names + persist envelope; unit tests with `fake-indexeddb`
+- [x] `lib/sampleData.ts` (players + teams) and `tests/e2e/fixtures/seed.ts` (seed → reload)
+- [x] `ImageUpload` with `checkImageFile` (+ unit tests) and client-side compression (800px / 1600px for banners); `LevelSelect` dropdown
+- [x] Player create/edit/list/search/detail; delete blocked while on any team; not-found handling
+- [x] Team form with `PlayerPicker` (choose existing or create inline, saved only with the team), list, search, detail, delete blocked while in any tournament
+- [x] Validation (3.11): 2 different players, unique team name, no duplicate pairs + unit tests
 - [ ] E2E: `players.spec.ts`, `teams.spec.ts` (incl. blocked deletes, no orphan inline players)
 
 ### Phase 4 — Tournaments & Sponsors
@@ -669,6 +669,10 @@ None blocking. The following defaults were chosen while writing the spec — con
 | 2026-10-06 | Players as separate entity | Players can belong to multiple teams |
 | 2026-10-06 | Min 4 / max 50 teams per tournament | 4 needed for a 3rd Place match; 50 keeps the bracket ≤ 64 slots |
 | 2026-10-06 | Block teams sharing a player in one tournament | A player can't play against themselves |
+| 2026-10-06 | `makeIdbStorage<T>()` generic for Zustand persist | Zustand v5 `PersistStorage<T>` expects `StorageValue<T>` from `getItem`; must JSON.parse/stringify |
+| 2026-10-06 | Static cross-store imports (no `require()`) | `usePlayerStore → useTeamStore → useTournamentStore` is one-way; no actual circular deps |
+| 2026-10-06 | Inline player stored as `PendingPlayer` with `tempId` | Committed to store only after team save succeeds; prevents orphaned players on cancel/error |
+| 2026-10-06 | Tailwind v4 `@theme` CSS variables (no `tailwind.config.ts` `theme.extend`) | Tailwind v4 changed config format; tokens defined in `globals.css` `@theme` block |
 | 2026-10-06 | Cookie session + Next.js middleware | Protects routes before page render; easy to swap for real auth |
 | 2026-10-06 | Route groups `(public)` / `(protected)` | Clear separation of access levels in the folder structure |
 | 2026-10-06 | Demo credentials via `NEXT_PUBLIC_*` env vars, unsigned cookie | Frontend-only v1; accepted security trade-off, replaced by real auth later |
