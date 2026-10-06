@@ -13,6 +13,8 @@ interface TeamState {
   deleteTeam: (id: string) => void
   getTeam: (id: string) => Team | undefined
   searchTeams: (q: string) => Team[]
+  setTeams: (teams: Team[]) => void
+  clearTeams: () => void
 }
 
 function normaliseName(s: string) {
@@ -99,6 +101,9 @@ export const useTeamStore = create<TeamState>()(
         const lower = q.toLowerCase()
         return get().teams.filter((t) => t.name.toLowerCase().includes(lower))
       },
+
+      setTeams: (teams) => set({ teams }),
+      clearTeams: () => set({ teams: [] }),
     }),
     {
       name: PERSIST_KEYS.teams,

@@ -536,14 +536,14 @@ pickle-ball-score/
 - [ ] E2E: `players.spec.ts`, `teams.spec.ts` (incl. blocked deletes, no orphan inline players)
 
 ### Phase 4 — Tournaments & Sponsors
-- [ ] Tournament + Sponsor Zod schemas; `useTournamentStore` with `assertSession()` in actions
-- [ ] `lib/tournament.ts` status rules (editable fields, delete permissions) + unit tests
-- [ ] Tournament form incl. sponsors (0–20, `normaliseName` uniqueness), ₹ prizes (≥ ₹1, Champion ≥ Runner-up ≥ 3rd), dates (End ≥ Start, past allowed), settings; fields locked by status
-- [ ] Tournament list + overview page (status badge, sponsor strip, prize table); delete in Draft/Drawn only
-- [ ] TeamPicker to add/remove teams (Draft only, 4–50, shared-player conflict check)
+- [x] Tournament + Sponsor Zod schemas; `useTournamentStore` with `assertSession()` in actions
+- [x] `lib/tournament.ts` status rules (editable fields, delete permissions) + unit tests
+- [x] Tournament form incl. sponsors (0–20, `normaliseName` uniqueness), ₹ prizes (≥ ₹1, Champion ≥ Runner-up ≥ 3rd), dates (End ≥ Start, past allowed), settings; fields locked by status
+- [x] Tournament list + overview page (status badge, sponsor strip, prize table); delete in Draft/Drawn only
+- [x] TeamPicker to add/remove teams (Draft only, 4–50, shared-player conflict check)
 - [ ] Team player lock / re-validation when the team is in Draft tournaments (3.2)
-- [ ] Sponsors page: `lib/sponsors.ts` (`normaliseName`, aggregation by tier) + unit tests, tier grouping, empty state, Become a Sponsor link
-- [ ] Extend `sampleData` with Draft tournaments + sponsors (incl. a sponsor at two tiers and a case/spacing variant)
+- [x] Sponsors page: `lib/sponsors.ts` (`normaliseName`, aggregation by tier) + unit tests, tier grouping, empty state, Become a Sponsor link
+- [x] Extend `sampleData` with Draft tournaments + sponsors (incl. a sponsor at two tiers and a case/spacing variant)
 - [ ] E2E: `tournaments.spec.ts`, `sponsors.spec.ts`
 
 ### Phase 5 — Draw & Bracket

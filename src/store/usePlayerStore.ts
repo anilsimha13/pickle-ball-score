@@ -12,6 +12,8 @@ interface PlayerState {
   deletePlayer: (id: string) => void
   getPlayer: (id: string) => Player | undefined
   searchPlayers: (q: string) => Player[]
+  setPlayers: (players: Player[]) => void
+  clearPlayers: () => void
 }
 
 export const usePlayerStore = create<PlayerState>()(
@@ -56,6 +58,9 @@ export const usePlayerStore = create<PlayerState>()(
             p.name.toLowerCase().includes(lower) || p.place.toLowerCase().includes(lower),
         )
       },
+
+      setPlayers: (players) => set({ players }),
+      clearPlayers: () => set({ players: [] }),
     }),
     {
       name: PERSIST_KEYS.players,
