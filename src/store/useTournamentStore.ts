@@ -2,9 +2,10 @@ import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
 import { makeIdbStorage, PERSIST_KEYS } from '@/lib/storage'
 import { assertSession } from '@/lib/auth'
-import { canDeleteTournament, canEditMeta } from '@/lib/tournament'
+import { canDeleteTournament, canEditMeta, canReshuffle } from '@/lib/tournament'
 import { normaliseName } from '@/lib/sponsors'
 import { hasSharedPlayer } from '@/lib/validation'
+import { generateDraw as libGenerateDraw, reshuffleDraw as libReshuffleDraw } from '@/lib/draw'
 import { usePlayerStore } from './usePlayerStore'
 import { useTeamStore } from './useTeamStore'
 import type { Tournament, CreateTournamentInput } from '@/types'
@@ -16,6 +17,8 @@ interface TournamentState {
   deleteTournament: (id: string) => void
   addTeamToTournament: (tournamentId: string, teamId: string) => void
   removeTeamFromTournament: (tournamentId: string, teamId: string) => void
+  generateDraw: (tournamentId: string) => void
+  reshuffleDraw: (tournamentId: string) => void
   getTournament: (id: string) => Tournament | undefined
   searchTournaments: (q: string) => Tournament[]
   setTournaments: (tournaments: Tournament[]) => void
@@ -102,6 +105,32 @@ export const useTournamentStore = create<TournamentState>()(
             if (t.id !== tournamentId) return t
             if (t.status !== 'Draft') throw new Error('Teams can only be changed in Draft status')
             return { ...t, teamIds: t.teamIds.filter((id) => id !== teamId) }
+          }),
+        }))
+      },
+
+      generateDraw(tournamentId) {
+        assertSession()
+        set((s) => ({
+          tournaments: s.tournaments.map((t) => {
+            if (t.id !== tournamentId) return t
+            if (t.status !== 'Draft') throw new Error('Draw can only be generated in Draft status')
+            if (t.teamIds.length < 4) throw new Error('Add at least 4 teams to generate the draw')
+            if (t.teamIds.length > 50) throw new Error('Maximum 50 teams allowed')
+            const matches = libGenerateDraw(t)
+            return { ...t, status: 'Drawn', matches }
+          }),
+        }))
+      },
+
+      reshuffleDraw(tournamentId) {
+        assertSession()
+        set((s) => ({
+          tournaments: s.tournaments.map((t) => {
+            if (t.id !== tournamentId) return t
+            if (!canReshuffle(t)) throw new Error('Re-shuffle is not available')
+            const matches = libReshuffleDraw(t)
+            return { ...t, matches }
           }),
         }))
       },

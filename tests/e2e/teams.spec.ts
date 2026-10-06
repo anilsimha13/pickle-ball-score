@@ -1,4 +1,4 @@
-import { test, expect } from '@playwright/test'
+import { test, expect, type Page } from '@playwright/test'
 import { PlayersPage } from './pages/PlayersPage'
 import { PlayerFormPage } from './pages/PlayerFormPage'
 import { TeamsPage } from './pages/TeamsPage'
@@ -62,7 +62,7 @@ test.describe('Teams list', () => {
 
 test.describe('Create team', () => {
   // Create two players first so the team form can pick them
-  async function createTwoPlayers(page: Parameters<typeof test>[1]) {
+  async function createTwoPlayers(page: Page) {
     const formPage = new PlayerFormPage(page)
     await formPage.gotoNew()
     await formPage.fillValidPlayer({ name: 'Player Alpha', place: 'Delhi' })
