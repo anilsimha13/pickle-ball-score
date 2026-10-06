@@ -39,6 +39,30 @@ const drawnMatches: Match[] = [
   { id: 'match-r3-p1', round: 3, position: 1, type: 'ThirdPlace', isBye: false, isWalkover: false, teamAId: null, teamBId: null, games: [], status: 'Scheduled' },
 ]
 
+// InProgress tournament — 8 teams, partially scored with a walkover
+const inProgressMatches: Match[] = [
+  // R1 — 4 matches
+  { id: 'ip-r1-p0', round: 1, position: 0, type: 'Knockout', isBye: false, isWalkover: false, teamAId: 'team-001', teamBId: 'team-002', games: [{ teamA: 11, teamB: 7 }, { teamA: 11, teamB: 9 }], winnerId: 'team-001', status: 'Completed' },
+  { id: 'ip-r1-p1', round: 1, position: 1, type: 'Knockout', isBye: false, isWalkover: true,  teamAId: 'team-003', teamBId: 'team-004', games: [], winnerId: 'team-003', status: 'Completed' },
+  { id: 'ip-r1-p2', round: 1, position: 2, type: 'Knockout', isBye: false, isWalkover: false, teamAId: 'team-005', teamBId: 'team-006', games: [{ teamA: 9, teamB: 11 }], winnerId: undefined, status: 'Live' },
+  { id: 'ip-r1-p3', round: 1, position: 3, type: 'Knockout', isBye: false, isWalkover: false, teamAId: 'team-007', teamBId: 'team-008', games: [], winnerId: undefined, status: 'Scheduled' },
+  // R2 — Semifinals
+  { id: 'ip-r2-p0', round: 2, position: 0, type: 'Knockout', isBye: false, isWalkover: false, teamAId: 'team-001', teamBId: 'team-003', games: [], winnerId: undefined, status: 'Scheduled' },
+  { id: 'ip-r2-p1', round: 2, position: 1, type: 'Knockout', isBye: false, isWalkover: false, teamAId: null, teamBId: null, games: [], winnerId: undefined, status: 'Scheduled' },
+  // Final
+  { id: 'ip-r3-p0', round: 3, position: 0, type: 'Knockout', isBye: false, isWalkover: false, teamAId: null, teamBId: null, games: [], winnerId: undefined, status: 'Scheduled' },
+  // 3rd Place
+  { id: 'ip-r3-p1', round: 3, position: 1, type: 'ThirdPlace', isBye: false, isWalkover: false, teamAId: null, teamBId: null, games: [], winnerId: undefined, status: 'Scheduled' },
+]
+
+// Completed tournament — 4 teams, all matches done
+const completedMatches: Match[] = [
+  { id: 'cp-r1-p0', round: 1, position: 0, type: 'Knockout', isBye: false, isWalkover: false, teamAId: 'team-001', teamBId: 'team-002', games: [{ teamA: 11, teamB: 5 }, { teamA: 8, teamB: 11 }, { teamA: 11, teamB: 8 }], winnerId: 'team-001', status: 'Completed' },
+  { id: 'cp-r1-p1', round: 1, position: 1, type: 'Knockout', isBye: false, isWalkover: false, teamAId: 'team-003', teamBId: 'team-004', games: [{ teamA: 11, teamB: 9 }, { teamA: 11, teamB: 7 }], winnerId: 'team-003', status: 'Completed' },
+  { id: 'cp-r2-p0', round: 2, position: 0, type: 'Knockout', isBye: false, isWalkover: false, teamAId: 'team-001', teamBId: 'team-003', games: [{ teamA: 11, teamB: 8 }, { teamA: 11, teamB: 6 }], winnerId: 'team-001', status: 'Completed' },
+  { id: 'cp-r2-p1', round: 2, position: 1, type: 'ThirdPlace', isBye: false, isWalkover: false, teamAId: 'team-002', teamBId: 'team-004', games: [{ teamA: 11, teamB: 9 }], winnerId: 'team-002', status: 'Completed' },
+]
+
 export const sampleTournaments: Tournament[] = [
   {
     id: 'tournament-001',
@@ -119,5 +143,35 @@ export const sampleTournaments: Tournament[] = [
       { id: 'sponsor-006', name: 'Chennai Sports Club', tier: 'Title', website: 'https://csc.example.com' },
     ],
     createdAt: '2026-02-01T00:00:00.000Z',
+  },
+  {
+    id: 'tournament-004',
+    name: 'Mumbai Premier League 2026',
+    venue: 'NSCI Dome, Mumbai',
+    startDate: '2026-02-10',
+    endDate: '2026-02-12',
+    pointsPerGame: 11,
+    bestOf: 3,
+    prizes: { champion: 60000, runnerUp: 30000, thirdPlace: 12000 },
+    teamIds: ['team-001', 'team-002', 'team-003', 'team-004', 'team-005', 'team-006', 'team-007', 'team-008'],
+    status: 'InProgress',
+    matches: inProgressMatches,
+    sponsors: [{ id: 'sponsor-007', name: 'Mumbai Pickle Club', tier: 'Title' }],
+    createdAt: '2026-01-20T00:00:00.000Z',
+  },
+  {
+    id: 'tournament-005',
+    name: 'Ahmedabad Winter Cup 2026',
+    venue: 'Trans Stadia, Ahmedabad',
+    startDate: '2026-01-15',
+    endDate: '2026-01-16',
+    pointsPerGame: 11,
+    bestOf: 3,
+    prizes: { champion: 25000, runnerUp: 12000, thirdPlace: 5000 },
+    teamIds: ['team-001', 'team-002', 'team-003', 'team-004'],
+    status: 'Completed',
+    matches: completedMatches,
+    sponsors: [],
+    createdAt: '2026-01-05T00:00:00.000Z',
   },
 ]

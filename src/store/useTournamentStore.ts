@@ -6,9 +6,13 @@ import { canDeleteTournament, canEditMeta, canReshuffle } from '@/lib/tournament
 import { normaliseName } from '@/lib/sponsors'
 import { hasSharedPlayer } from '@/lib/validation'
 import { generateDraw as libGenerateDraw, reshuffleDraw as libReshuffleDraw } from '@/lib/draw'
+import { advanceWinner, canEditCompletedMatch, getFinalMatch, getThirdPlaceMatch } from '@/lib/bracket'
+import { validateGames, determineWinner, matchStatus } from '@/lib/scoring'
 import { usePlayerStore } from './usePlayerStore'
 import { useTeamStore } from './useTeamStore'
-import type { Tournament, CreateTournamentInput } from '@/types'
+import type { Tournament, CreateTournamentInput, Match } from '@/types'
+
+type GameScore = { teamA: number; teamB: number }
 
 interface TournamentState {
   tournaments: Tournament[]
@@ -19,6 +23,9 @@ interface TournamentState {
   removeTeamFromTournament: (tournamentId: string, teamId: string) => void
   generateDraw: (tournamentId: string) => void
   reshuffleDraw: (tournamentId: string) => void
+  saveGameScores: (tournamentId: string, matchId: string, games: GameScore[]) => void
+  recordWalkover: (tournamentId: string, matchId: string, winnerId: string) => void
+  editMatchScores: (tournamentId: string, matchId: string, games: GameScore[]) => void
   getTournament: (id: string) => Tournament | undefined
   searchTournaments: (q: string) => Tournament[]
   setTournaments: (tournaments: Tournament[]) => void
@@ -143,6 +150,106 @@ export const useTournamentStore = create<TournamentState>()(
         if (!q.trim()) return get().tournaments
         const lower = q.toLowerCase()
         return get().tournaments.filter((t) => t.name.toLowerCase().includes(lower))
+      },
+
+      saveGameScores(tournamentId, matchId, games) {
+        assertSession()
+        set((s) => ({
+          tournaments: s.tournaments.map((t) => {
+            if (t.id !== tournamentId) return t
+            if (t.status === 'Announced') throw new Error('Tournament is announced and read-only')
+            const match = t.matches.find((m) => m.id === matchId)
+            if (!match) throw new Error('Match not found')
+            if (!match.teamAId || !match.teamBId) throw new Error('Both teams must be set to score this match')
+            const errors = validateGames(games, t.pointsPerGame, t.bestOf)
+            if (errors.length > 0) throw new Error(errors.join('\n'))
+
+            const winnerId = determineWinner(games, match.teamAId, match.teamBId, t.bestOf) ?? undefined
+            const status = matchStatus(games, t.bestOf)
+            const updatedMatch: Match = { ...match, games, status, winnerId }
+
+            let matches = t.matches.map((m) => (m.id === matchId ? updatedMatch : m))
+            if (winnerId) {
+              matches = advanceWinner(matches, updatedMatch)
+            }
+
+            // Status transitions (t.status !== 'Announced' already verified above)
+            let newStatus: Tournament['status'] = t.status
+            if (t.status === 'Drawn' && games.length > 0) newStatus = 'InProgress'
+            const final = getFinalMatch(matches)
+            const third = getThirdPlaceMatch(matches)
+            if (final?.status === 'Completed' && third?.status === 'Completed') {
+              newStatus = 'Completed'
+            }
+
+            return { ...t, matches, status: newStatus }
+          }),
+        }))
+      },
+
+      recordWalkover(tournamentId, matchId, winnerId) {
+        assertSession()
+        set((s) => ({
+          tournaments: s.tournaments.map((t) => {
+            if (t.id !== tournamentId) return t
+            if (t.status === 'Announced') throw new Error('Tournament is announced and read-only')
+            const match = t.matches.find((m) => m.id === matchId)
+            if (!match) throw new Error('Match not found')
+            if (!match.teamAId || !match.teamBId) throw new Error('Both teams must be known for a walkover')
+            if (match.status === 'Completed' && !match.isWalkover) {
+              throw new Error('Match is already completed')
+            }
+
+            const updatedMatch: Match = {
+              ...match,
+              isWalkover: true,
+              games: [],
+              winnerId,
+              status: 'Completed',
+            }
+
+            let matches = t.matches.map((m) => (m.id === matchId ? updatedMatch : m))
+            matches = advanceWinner(matches, updatedMatch)
+
+            let newStatus: Tournament['status'] = t.status
+            if (t.status === 'Drawn') newStatus = 'InProgress'
+            const final = getFinalMatch(matches)
+            const third = getThirdPlaceMatch(matches)
+            if (final?.status === 'Completed' && third?.status === 'Completed') {
+              newStatus = 'Completed'
+            }
+
+            return { ...t, matches, status: newStatus }
+          }),
+        }))
+      },
+
+      editMatchScores(tournamentId, matchId, games) {
+        assertSession()
+        set((s) => ({
+          tournaments: s.tournaments.map((t) => {
+            if (t.id !== tournamentId) return t
+            if (t.status === 'Announced') throw new Error('Tournament is announced and read-only')
+            if (!canEditCompletedMatch(t.matches, matchId)) {
+              throw new Error('Cannot edit: a downstream match already has scores or a walkover')
+            }
+            const match = t.matches.find((m) => m.id === matchId)
+            if (!match || !match.teamAId || !match.teamBId) throw new Error('Match not found or teams missing')
+            const errors = validateGames(games, t.pointsPerGame, t.bestOf)
+            if (errors.length > 0) throw new Error(errors.join('\n'))
+
+            const winnerId = determineWinner(games, match.teamAId, match.teamBId, t.bestOf) ?? undefined
+            const status = matchStatus(games, t.bestOf)
+            const updatedMatch: Match = { ...match, games, status, winnerId, isWalkover: false }
+
+            let matches = t.matches.map((m) => (m.id === matchId ? updatedMatch : m))
+            if (winnerId) {
+              matches = advanceWinner(matches, updatedMatch)
+            }
+
+            return { ...t, matches }
+          }),
+        }))
       },
 
       setTournaments: (tournaments) => set({ tournaments }),

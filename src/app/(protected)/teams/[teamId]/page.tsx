@@ -16,6 +16,7 @@ import { Tooltip } from '@/components/ui/Tooltip'
 import { TeamRecord } from '@/components/teams/TeamRecord'
 import { useToast } from '@/components/ui/Toast'
 import { useTournamentStore } from '@/store/useTournamentStore'
+import { teamRecord } from '@/lib/standings'
 
 function TeamDetail({ teamId }: { teamId: string }) {
   const { getTeam, deleteTeam } = useTeamStore()
@@ -40,7 +41,7 @@ function TeamDetail({ teamId }: { teamId: string }) {
     }
   }
 
-  const tournaments = useTournamentStore.getState().tournaments
+  const tournaments = useTournamentStore((s) => s.tournaments)
   const tournamentCount = tournaments.filter((t) => t.teamIds.includes(teamId)).length
   const deleteBlocked = tournamentCount > 0
   const deleteReason = deleteBlocked
@@ -87,7 +88,7 @@ function TeamDetail({ teamId }: { teamId: string }) {
           </div>
           <div>
             <p className="text-sm text-muted mb-1">W/L Record</p>
-            <TeamRecord />
+            <TeamRecord {...teamRecord(teamId, tournaments)} />
           </div>
         </div>
 
