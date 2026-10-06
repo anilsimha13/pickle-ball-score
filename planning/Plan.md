@@ -566,14 +566,14 @@ pickle-ball-score/
 - [ ] E2E: `scoring.spec.ts` (incl. walkovers and standings)
 
 ### Phase 7 — Results & Announcement
-- [ ] `lib/dates.ts` + `lib/results.ts` eligibility (local date on/after End Date + Final & 3rd Place done, missing reasons) + podium; unit tests (mocked date)
-- [ ] Manual "Announce Results" button (disabled-with-reason tooltip) + confirm dialog → `Announced`, read-only
-- [ ] Results page: podium, ₹ prizes, sponsors, canvas-confetti (reduced-motion aware), pre-announce empty state
-- [ ] Extend `sampleData` with an Announced tournament
+- [x] `lib/dates.ts` + `lib/results.ts` eligibility (local date on/after End Date + Final & 3rd Place done, missing reasons) + podium; unit tests (mocked date)
+- [x] Manual "Announce Results" button (disabled-with-reason tooltip) + confirm dialog → `Announced`, read-only
+- [x] Results page: podium, ₹ prizes, sponsors, canvas-confetti (reduced-motion aware), pre-announce empty state
+- [x] Extend `sampleData` with an Announced tournament
 - [ ] E2E: `results.spec.ts` (use `page.clock` before/on/after end date)
 
 ### Phase 8 — Dashboard & Settings
-- [ ] Dashboard: stats, not started (with "Start date passed" badge) / live, recent champions, empty state
+- [x] Dashboard: stats, not started (with "Start date passed" badge) / live, recent champions, empty state
 - [ ] `lib/backup.ts` export / import merge-by-id with integrity + status-lock checks & rollback + unit tests (`fake-indexeddb`)
 - [ ] Settings: privacy notice, export (with personal-data warning), import, load sample data, reset, contact messages tab
 - [ ] E2E: `dashboard.spec.ts`, `settings.spec.ts`
